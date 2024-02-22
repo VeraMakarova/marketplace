@@ -28,17 +28,22 @@ public class Order {
         return id;
     }
 
-    public void addItem(Item item) {
-        int counter = cart.getOrDefault(item, 0);
-        cart.put(item, ++counter);
-        totalPrice += item.getPrice();
+    public void addItem(Item item) { //добавляет один товар в список заказа
+        int counter = cart.getOrDefault(item, 0);//сколько таких товаров уже в заказе
+        cart.put(item, ++counter); //обновляем мапу списка товаров в заказе, количество увеличивается
+        totalPrice += item.getPrice();//цена заказа увеличивается на цену товара
     }
 
     public void applyDiscount(double discount) {
-        if (!discountApplied) {
-            totalPrice *= (1- discount);
-            discountApplied = true;
-        }
+     if (discount>=1 && discount<=100) {
+         if (!discountApplied) {
+             totalPrice *= (1 - discount * 0.01);
+             discountApplied = true;
+         }
+     }
+     else {
+         System.out.println("Некорректное значение скидки");
+     }
     }
 
     public Client getClient() {
