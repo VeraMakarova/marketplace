@@ -90,7 +90,7 @@ public class OrderTest {
     @DisplayName("Применение корректной скидки отображается в заказе")
     @Tag("Скидка")
     public void applyDiscountTest1() throws IOException {
-        MartaOrder.applyDiscount(10);
+        MartaOrder.applyDiscount(0.1);
         assertTrue(MartaOrder.isDiscountApplied());
     }
 
@@ -98,26 +98,26 @@ public class OrderTest {
     @DisplayName("Применение корректной скидки корректно уменьшает сумму заказа")
     @Tag("Скидка")
     public void applyDiscountTest2() throws IOException {
-        double discount = 10;
+        double discount = 0.1;
         MartaOrder.addItem(someSmartphone);//3. добавляем товар в заказ
         double totalPriceBefore = MartaOrder.getTotalPrice(); //2. проверяем стоимость заказа
         MartaOrder.applyDiscount(discount);
         double totalPriceAfter = MartaOrder.getTotalPrice(); //2. проверяем стоимость заказа
-        assertEquals(discount, (totalPriceBefore - totalPriceAfter));
+        assertEquals(discount, (totalPriceBefore - totalPriceAfter)/totalPriceBefore);
     }
 
     @Test
     @DisplayName("Применение корректной скидки несколько раз. Учитывается только первая скидка")
     @Tag("Скидка")
     public void applyDiscountTest3() throws IOException {
-        double discount = 10;
-        double discount2 = 20;
+        double discount = 0.1;
+        double discount2 = 0.2;
         MartaOrder.addItem(someSmartphone);
         double totalPriceBefore = MartaOrder.getTotalPrice();
         MartaOrder.applyDiscount(discount);
         MartaOrder.applyDiscount(discount2);
         double totalPriceAfter = MartaOrder.getTotalPrice();
-        assertEquals(discount, (totalPriceBefore - totalPriceAfter));
+        assertEquals(discount, (totalPriceBefore - totalPriceAfter)/totalPriceBefore);
     }
 
     @Test

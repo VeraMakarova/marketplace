@@ -34,10 +34,11 @@ public class Order {
         totalPrice += item.getPrice();//цена заказа увеличивается на цену товара
     }
 
+
     public void applyDiscount(double discount) {
-     if (discount>=1 && discount<=100) {
+     if (discount>=0 && discount<=1) {
          if (!discountApplied) {
-             totalPrice *= (1 - discount * 0.01);
+             totalPrice *= (1 - discount);
              discountApplied = true;
          }
      }
