@@ -6,7 +6,6 @@ import ru.inno.market.model.*;
 import ru.inno.market.model.Order;
 
 import java.io.IOException;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -15,20 +14,17 @@ public class MarketServiceTest {
 
     private Client Jack;
     private Item someLaptope;
-    private Order JackOrder;
+    private Item someSmartphone;
     private MarketService marketService;
 
-   @BeforeEach
+    @BeforeEach
     public void setUp() {
-       marketService = new MarketService();
-       Jack = new Client(8, "Jack");
-//        MartaOrder = new Order(1, Marta); // Создаем заказ тестового юзера Марты
-    }
+        marketService = new MarketService();
+        Jack = new Client(8, "Jack");
+        someLaptope = new Item(30, "NewLaptop", Category.LAPTOPS, 100.00); // создаем новый товар
+        someSmartphone = new Item(18, "Samsung Galaxy", Category.SMARTPHONES, 100.00); // создаем новый товар
 
-//    @AfterEach
-//    public void tearDown() {
-//        MartaOrder = new Order(1, Marta);//перезаписываем заказ после теста - меняем тот, что был на пустой заказ
-//    }
+    }
 
 
     @Test
@@ -37,7 +33,7 @@ public class MarketServiceTest {
     public void createOrderForTest1() throws IOException {
         int orderID = marketService.createOrderFor(Jack);
         int orderID2 = marketService.createOrderFor(Jack);
-        assertEquals(1, orderID2-orderID); // сравниваем
+        assertEquals(1, orderID2 - orderID);
     }
 
     @Test
@@ -45,24 +41,34 @@ public class MarketServiceTest {
     @Tag("ДобавлениеТовара")
     public void addItemToOrderTest1() throws IOException {
         int orderID = marketService.createOrderFor(Jack);
-        someLaptope = new Item(30, "NewLaptop", Category.LAPTOPS, 100.00); // создаем новый товар
         marketService.addItemToOrder(someLaptope, orderID);
         assertTrue(marketService.getOrderInfo(orderID).getItems().containsKey(someLaptope)); // сравниваем
-        //6. Удаляем заказ - вынесено в tearDown?
 
     }
-//___________________________________________
+
     @Test
     @DisplayName("Применение корректной скидки корректно уменьшает сумму заказа")
     @Tag("Скидка")
     public void applyDiscountForOrderTest1() throws IOException {
         int orderID = marketService.createOrderFor(Jack);
-        someLaptope = new Item(30, "NewLaptop", Category.LAPTOPS, 100.00); // создаем новый товар
         marketService.addItemToOrder(someLaptope, orderID);
         double x = marketService.applyDiscountForOrder(orderID, PromoCodes.HAPPY_NEW_YEAR);
         double totalPriceAfter = marketService.getOrderInfo(0).getTotalPrice();
         assertEquals(x, totalPriceAfter);
 
+    }
+
+    @Test
+    @DisplayName("Два товара, две скидки. Учитывается только первая скидка на весь заказ")
+    @Tag("скидка")
+    public void applyDiscountForOrderTest3() throws IOException {
+
+        int orderID = marketService.createOrderFor(Jack);
+        marketService.addItemToOrder(someLaptope, orderID);
+        marketService.addItemToOrder(someSmartphone, orderID);
+        double totalPriceFirstDiscount = marketService.applyDiscountForOrder(orderID, PromoCodes.HAPPY_HOUR);
+        double totalPriceSecondDiscount = marketService.applyDiscountForOrder(orderID, PromoCodes.FIRST_ORDER);
+        assertEquals(totalPriceFirstDiscount, totalPriceSecondDiscount);
 
     }
 
@@ -72,7 +78,6 @@ public class MarketServiceTest {
     public void getOrderInfoTest1() throws IOException {
 
         int orderID = marketService.createOrderFor(Jack);
-        someLaptope = new Item(30, "NewLaptop", Category.LAPTOPS, 100.00); // создаем новый товар
         marketService.addItemToOrder(someLaptope, orderID);
         assertEquals(someLaptope.getPrice(), marketService.getOrderInfo(orderID).getTotalPrice());
 
@@ -84,7 +89,6 @@ public class MarketServiceTest {
     public void getOrderInfoTest2() throws IOException {
 
         int orderID = marketService.createOrderFor(Jack);
-        someLaptope = new Item(30, "NewLaptop", Category.LAPTOPS, 100.00); // создаем новый товар
         marketService.addItemToOrder(someLaptope, orderID);
         marketService.addItemToOrder(someLaptope, orderID);
         marketService.addItemToOrder(someLaptope, orderID);
