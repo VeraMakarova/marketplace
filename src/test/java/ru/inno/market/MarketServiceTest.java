@@ -93,6 +93,7 @@ public class MarketServiceTest {
         marketService.addItemToOrder(someLaptope, orderID);
         marketService.addItemToOrder(someLaptope, orderID);
         assertEquals(3, marketService.getOrderInfo(orderID).getCart().get(someLaptope));
+
     }
 
 }
